@@ -9,7 +9,7 @@ class TradingStrategy(Strategy):
 
     @property
     def interval(self):
-        return "30min"
+        return "30minutes"
 
     def run(self, data):
         d = data["ohlcv"]
@@ -26,14 +26,15 @@ class TradingStrategy(Strategy):
 
         current = holdings.get("SPY", 0)
 
-        buy = (
+        buy_signal = (
             current == 0 and
             ema20 > ema50 and
             price >= ema20 and
-            rsi > 40 and rsi < 55
+            rsi > 40 and
+            rsi < 55
         )
 
-        sell = (
+        sell_signal = (
             current > 0 and
             (
                 price < ema20 or
@@ -41,10 +42,10 @@ class TradingStrategy(Strategy):
             )
         )
 
-        if buy:
+        if buy_signal:
             return TargetAllocation({"SPY": 1})
 
-        if sell:
+        if sell_signal:
             return TargetAllocation({"SPY": 0})
 
         return None
